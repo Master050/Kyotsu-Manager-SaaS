@@ -1,0 +1,96 @@
+/* Astra AI - App Animations & Global Styles */
+
+.App {
+  min-height: 100vh;
+  background-color: #050508;
+}
+
+/* Page transition wrapper */
+.page-enter {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+
+/* Neon border animation */
+@keyframes neon-border {
+  0% { border-color: rgba(168, 85, 247, 0.5); }
+  50% { border-color: rgba(34, 211, 238, 0.5); }
+  100% { border-color: rgba(168, 85, 247, 0.5); }
+}
+
+.neon-border-anim {
+  animation: neon-border 3s ease-in-out infinite;
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-text-anim {
+  background: linear-gradient(270deg, #a855f7, #22d3ee, #4fc3f7, #a855f7);
+  background-size: 300% 300%;
+  animation: gradient-shift 5s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scan line effect */
+@keyframes scan {
+  from { background-position: 0 0; }
+  to { background-position: 0 100%; }
+}
+
+/* Logo glow pulse */
+@keyframes logo-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6)) drop-shadow(0 0 16px rgba(34, 211, 238, 0.3)); }
+  50% { filter: drop-shadow(0 0 16px rgba(168, 85, 247, 0.9)) drop-shadow(0 0 30px rgba(34, 211, 238, 0.5)); }
+}
+
+.logo-glow { animation: logo-glow 3s ease-in-out infinite; }
+
+/* Particle/orb fade in */
+@keyframes orb-appear {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 0.6; transform: scale(1); }
+}
+
+.orb-appear { animation: orb-appear 1.5s ease-out forwards; }
+
+/* Message appear */
+@keyframes msg-appear {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.msg-appear { animation: msg-appear 0.25s ease-out forwards; }
+
+/* Sidebar item hover */
+.sidebar-item {
+  transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
+}
+.sidebar-item:hover {
+  padding-left: 6px;
+}
+
+/* Status indicator pulse */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.status-pulse { animation: status-pulse 2s ease-in-out infinite; }
+
+/* Chart grid lines */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255,255,255,0.05) !important;
+}
