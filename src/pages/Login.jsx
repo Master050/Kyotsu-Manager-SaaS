@@ -2,14 +2,46 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
-import { Lock, User, LogIn, AlertCircle, ShieldCheck, Sparkles, Mail, UserPlus, ArrowRight, CheckCircle2 } from "lucide-react";
+import { 
+  Lock, User, LogIn, AlertCircle, ShieldCheck, Sparkles, 
+  Mail, UserPlus, ArrowRight, CheckCircle2, Zap, Flame, Crown, Star
+} from "lucide-react";
 import AstraBackground from "../components/AstraBackground";
 import LoginSuccessAnimation from "../components/LoginSuccessAnimation";
 
 const PLANS = [
-  { id: 'Plano I', name: 'Plano I', hubs: 2, price: '9,99', promo: '0,99 (2 Primeiros)', color: 'from-blue-500/20 to-indigo-500/10' },
-  { id: 'Plano II', name: 'Plano II', hubs: 4, price: '16,99', color: 'from-purple-500/20 to-pink-500/10' },
-  { id: 'Plano III', name: 'Plano III', hubs: 6, price: '21,99', color: 'from-amber-500/20 to-orange-500/10' }
+  { 
+    id: 'Plano I', 
+    name: 'Plano I', 
+    hubs: 2, 
+    price: '9,99', 
+    promo: '0,99 (2 Primeiros)', 
+    slogan: 'Essencial para Iniciantes',
+    color: 'from-cyan-500 to-blue-600',
+    glow: 'rgba(34,211,238,0.3)',
+    icon: Zap
+  },
+  { 
+    id: 'Plano II', 
+    name: 'Plano II', 
+    hubs: 4, 
+    price: '16,99', 
+    slogan: 'Alta Performance & Gestão',
+    color: 'from-purple-500 to-pink-600',
+    glow: 'rgba(168,85,247,0.3)',
+    icon: Flame,
+    popular: true
+  },
+  { 
+    id: 'Plano III', 
+    name: 'Plano III', 
+    hubs: 6, 
+    price: '21,99', 
+    slogan: 'O Domínio Total do Sistema',
+    color: 'from-amber-400 to-orange-600',
+    glow: 'rgba(251,191,36,0.3)',
+    icon: Crown
+  }
 ];
 
 export default function Login() {
@@ -17,7 +49,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState(PLANS[0].id);
+  const [selectedPlan, setSelectedPlan] = useState(PLANS[1].id); // Plano II default por ser popular
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSuccessAnim, setShowSuccessAnim] = useState(false);
@@ -82,7 +114,7 @@ export default function Login() {
               key={i}
               className="absolute w-1 h-1 rounded-full"
               style={{
-                background: i % 3 === 0 ? "#a855f7" : i % 3 === 1 ? "#22d3ee" : "#4fc3f7",
+                background: i % 3 === 0 ? "#a855f7" : i % 3 === 1 ? "#22d3ee" : "#fbbf24",
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
                 boxShadow: `0 0 10px currentColor`
@@ -223,32 +255,57 @@ export default function Login() {
                 </div>
 
                 {isRegister && (
-                  <div className="space-y-3">
-                    <label className="text-xs font-heading uppercase tracking-widest block text-slate-400">Escolha seu Plano</label>
-                    <div className="grid grid-cols-1 gap-2">
-                      {PLANS.map((plan) => (
-                        <div 
-                          key={plan.id}
-                          onClick={() => setSelectedPlan(plan.id)}
-                          className={`relative cursor-pointer p-4 rounded-xl border transition-all ${selectedPlan === plan.id ? 'bg-white/5 border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.1)]' : 'bg-black/20 border-white/5 hover:border-white/10'}`}
-                        >
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${plan.color} flex items-center justify-center`}>
-                                 {selectedPlan === plan.id ? <CheckCircle2 size={16} className="text-white" /> : <Sparkles size={16} className="text-white/40" />}
+                  <div className="space-y-4 pt-2">
+                    <label className="text-xs font-heading uppercase tracking-widest block text-slate-500">Selecione seu nível de acesso</label>
+                    <div className="grid grid-cols-1 gap-3">
+                      {PLANS.map((plan) => {
+                        const isSelected = selectedPlan === plan.id;
+                        return (
+                          <motion.div 
+                            key={plan.id}
+                            onClick={() => setSelectedPlan(plan.id)}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            className={`relative cursor-pointer p-4 rounded-2xl border transition-all duration-300 ${isSelected ? 'bg-white/[0.07] border-white/20' : 'bg-black/20 border-white/5 hover:border-white/10'}`}
+                            style={{
+                              boxShadow: isSelected ? `0 0 25px ${plan.glow}` : 'none'
+                            }}
+                          >
+                            {plan.popular && (
+                              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-[9px] font-bold text-white px-2 py-0.5 rounded-full shadow-lg z-20">
+                                MAIS POPULAR
                               </div>
-                              <div>
-                                <p className="text-sm font-bold text-white">{plan.name}</p>
-                                <p className="text-[10px] text-slate-400 uppercase tracking-tighter">Até {plan.hubs} Hubs Diferentes</p>
+                            )}
+                            
+                            <div className="flex justify-between items-center relative z-10">
+                              <div className="flex items-center gap-4">
+                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center shadow-lg`}>
+                                   <plan.icon size={22} className="text-white" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-bold text-white flex items-center gap-2">
+                                    {plan.name}
+                                    {isSelected && <CheckCircle2 size={14} className="text-emerald-400" />}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 font-mono uppercase tracking-widest">{plan.slogan}</p>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <div className="h-1 w-1 rounded-full bg-slate-600" />
+                                    <p className="text-[9px] text-slate-500 font-bold uppercase">Até {plan.hubs} Hubs Ativos</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                 <p className="text-xs font-mono text-white font-bold">R$ {plan.price}</p>
+                                 {plan.promo && (
+                                   <div className="bg-emerald-500/20 px-2 py-0.5 rounded mt-1">
+                                      <p className="text-[8px] text-emerald-400 font-bold uppercase">{plan.promo}</p>
+                                   </div>
+                                 )}
                               </div>
                             </div>
-                            <div className="text-right">
-                               <p className="text-xs font-mono text-purple-400 font-bold">R$ {plan.price}</p>
-                               {plan.promo && <p className="text-[9px] text-emerald-400 font-bold animate-pulse">{plan.promo}</p>}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -278,8 +335,8 @@ export default function Login() {
                 >
                   {loading ? "Processando..." : (
                     <>
-                      {isRegister ? <ArrowRight size={18} /> : <LogIn size={18} />}
-                      {isRegister ? "CONTRATAR AGORA" : "ENTRAR NO SISTEMA"}
+                      {isRegister ? <Star size={18} className="text-yellow-400" /> : <LogIn size={18} />}
+                      {isRegister ? "ADQUIRIR ACESSO AGORA" : "ENTRAR NO SISTEMA"}
                     </>
                   )}
                 </motion.button>

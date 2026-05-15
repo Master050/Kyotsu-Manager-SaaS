@@ -11,6 +11,9 @@ export const useAuth = () => {
   return context;
 };
 
+const ADMIN_EMAIL = "arturpereira0507@gmail.com";
+const ADMIN_PASS = "Freitas0507@@";
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,7 +27,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         const adminStored = localStorage.getItem("kyotsu_admin");
         if (adminStored === "true") {
-           setUser({ email: "Admin", role: "super-admin", username: "Admin", plan_type: "Unlimited" });
+           setUser({ email: ADMIN_EMAIL, role: "super-admin", username: "Admin", plan_type: "Unlimited" });
            setHubLimit(999);
         } else {
            setUser(null);
@@ -47,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
       if (data && !error) {
         setHubLimit(data.hub_limit);
-        setUser(prev => prev ? { ...prev, plan_type: data.plan_type, hub_limit: data.hub_limit } : null);
+        setUser(prev => prev ? { ...prev, plan_type: data.plan_type, hub_limit: data.hub_limit, role: prev.email === ADMIN_EMAIL ? "super-admin" : "user" } : null);
       }
     } catch (e) {
       console.error("Erro ao buscar assinatura:", e.message);
@@ -56,8 +59,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      if (email === "Admin" && password === "Freitas0507@@") {
-        const adminData = { email: "Admin", role: "super-admin", username: "Admin", plan_type: "Unlimited" };
+      // Check for hardcoded Admin access with the new email
+      if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
+        const adminData = { email: ADMIN_EMAIL, role: "super-admin", username: "Admin", plan_type: "Unlimited" };
         setUser(adminData);
         setHubLimit(999);
         localStorage.setItem("kyotsu_admin", "true");
@@ -109,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     setHubLimit(2);
   };
 
-  const isAdminPortal = () => user?.role === "super-admin" || user?.email === "Admin" || localStorage.getItem("kyotsu_admin") === "true";
+  const isAdminPortal = () => user?.role === "super-admin" || user?.email === ADMIN_EMAIL || localStorage.getItem("kyotsu_admin") === "true";
 
   const value = {
     user,
