@@ -1,185 +1,116 @@
-import React, { useState, useRef } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import * as Tooltip from "@radix-ui/react-tooltip";
-import { motion } from "framer-motion";
-import MatrixRain from "./MatrixRain";
-import {
-  LayoutDashboard, Server, Activity, Settings, ChevronLeft, ChevronRight, Home, LogOut, Shield, Eye, Bell
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { 
+  LayoutDashboard, 
+  Layers, 
+  Webhook, 
+  ShieldAlert, 
+  LogOut,
+  User,
+  ChevronRight,
+  Zap
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
 
-const navItems = [
-  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/hubs", label: "Hubs", icon: Server },
-  { path: "/webhook", label: "Webhook", icon: Bell },
-  { path: "/logs", label: "Bot Logs", icon: Activity },
-];
-
-const adminItems = [
-  { path: "/admin-portal", label: "Portal Admin", icon: Shield },
-];
-
-const bottomItems = [
-  { path: "/settings", label: "Settings", icon: Settings },
-];
-
-export default function Sidebar({ collapsed, onToggle, isMobile }) {
+const Sidebar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const [showMatrix, setShowMatrix] = useState(false);
-  const clickCountRef = useRef(0);
-  const clickTimerRef = useRef(null);
+  const { user, logout, isAdmin } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  // FORÇAR ADMIN SE FOR O SEU EMAIL
+  const isC_E_O = user?.email === 'arturpereira0507@gmail.com' || isAdmin;
 
-  const handleLogoClick = () => {
-    clickCountRef.current += 1;
-    if (clickCountRef.current === 3) {
-      setShowMatrix(true);
-      clickCountRef.current = 0;
-      if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-    } else {
-      if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-      clickTimerRef.current = setTimeout(() => {
-        clickCountRef.current = 0;
-      }, 500);
-    }
-  };
+  const menuItems = [
+    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", desc: "Visão Geral" },
+    { icon: Layers, label: "Hub Manager", path: "/hubs", desc: "Gerenciar Hubs" },
+    { icon: Webhook, label: "Webhook", path: "/webhook", desc: "Configurações Discord" },
+  ];
 
-  const NavItemWithTooltip = ({ children, label, collapsed }) => {
-    if (!collapsed || isMobile) return children;
-    return (
-      <Tooltip.Provider delayDuration={100}>
-        <Tooltip.Root>
-          <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
-          <Tooltip.Portal>
-            <Tooltip.Content
-              side="right"
-              className="px-3 py-2 rounded-lg text-sm font-body text-white z-50"
-              style={{
-                background: "linear-gradient(135deg, rgba(168,85,247,0.95), rgba(124,58,237,0.95))",
-                border: "1px solid rgba(168,85,247,0.5)",
-                boxShadow: "0 0 20px rgba(168,85,247,0.5), 0 4px 12px rgba(0,0,0,0.5)",
-                backdropFilter: "blur(10px)",
-              }}
-              sideOffset={10}
-            >
-              {label}
-              <Tooltip.Arrow className="fill-purple-600" />
-            </Tooltip.Content>
-          </Tooltip.Portal>
-        </Tooltip.Root>
-      </Tooltip.Provider>
-    );
-  };
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <>
-      <motion.aside
-        initial={false}
-        animate={{
-          x: isMobile ? (collapsed ? "-100%" : 0) : 0,
-          width: isMobile ? "280px" : (collapsed ? "72px" : "272px"),
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed top-0 left-0 h-screen z-[80] flex flex-col bg-[#030306] border-r border-white/10"
-      >
-        <div className="h-16 flex items-center px-4 border-b border-white/10">
-          <div onClick={handleLogoClick} className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center cursor-pointer">
-            <span className="text-xl font-bold text-purple-400">K</span>
+    <aside className="w-64 bg-[#05070a] border-r border-white/5 flex flex-col h-screen fixed left-0 top-0 z-50">
+      <div className="p-8 border-b border-white/5 bg-gradient-to-br from-purple-500/5 to-transparent">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-600/20">
+            <ShieldAlert className="text-white" size={24} />
           </div>
-          {(!collapsed || isMobile) && (
-            <div className="ml-3">
-              <p className="text-sm font-bold text-white">Kyotsu Manager</p>
-              <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">v4.2.0</p>
-            </div>
-          )}
+          <div>
+            <h1 className="text-xl font-heading font-bold text-white tracking-tighter leading-none">KYOTSU</h1>
+            <p className="text-[10px] text-purple-400 font-mono font-bold mt-1 tracking-widest uppercase">Key Manager</p>
+          </div>
         </div>
+      </div>
 
-        <nav className="flex-1 py-6 px-3 space-y-8 overflow-y-auto">
-          <div>
-            {(!collapsed || isMobile) && <p className="text-[10px] uppercase font-bold text-slate-500 mb-4 px-2 tracking-widest">Principal</p>}
-            <ul className="space-y-1">
-              {navItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <li key={item.path}>
-                    <NavItemWithTooltip label={item.label} collapsed={collapsed}>
-                      <NavLink to={item.path} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all ${isActive ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" : "text-slate-500 hover:text-slate-300"}`}>
-                        <item.icon size={20} />
-                        {(!collapsed || isMobile) && <span className="text-sm font-medium">{item.label}</span>}
-                      </NavLink>
-                    </NavItemWithTooltip>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          {(user?.role === "super-admin" || user?.email === "Admin") && (
-            <div>
-              {(!collapsed || isMobile) && <p className="text-[10px] uppercase font-bold text-slate-500 mb-4 px-2 tracking-widest">Administração</p>}
-              <ul className="space-y-1">
-                {adminItems.map((item) => {
-                  const isActive = location.pathname === item.path;
-                  return (
-                    <li key={item.path}>
-                      <NavItemWithTooltip label={item.label} collapsed={collapsed}>
-                        <NavLink to={item.path} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all ${isActive ? "bg-red-500/10 text-red-400 border border-red-500/20" : "text-slate-500 hover:text-slate-300"}`}>
-                          <item.icon size={20} />
-                          {(!collapsed || isMobile) && <span className="text-sm font-medium">{item.label}</span>}
-                        </NavLink>
-                      </NavItemWithTooltip>
-                    </li>
-                  );
-                })}
-              </ul>
+      <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto">
+        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.2em] px-4 mb-4">Principais</p>
+        {menuItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+              isActive(item.path)
+                ? "bg-purple-600/10 text-purple-400 border border-purple-500/20"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <item.icon size={20} className={isActive(item.path) ? "text-purple-400" : "text-slate-500 group-hover:text-slate-200"} />
+            <div className="flex flex-col">
+              <span className="text-sm font-bold">{item.label}</span>
+              <span className="text-[9px] opacity-50">{item.desc}</span>
             </div>
-          )}
+          </Link>
+        ))}
 
-          <div>
-            {(!collapsed || isMobile) && <p className="text-[10px] uppercase font-bold text-slate-500 mb-4 px-2 tracking-widest">Sistema</p>}
-            <ul className="space-y-1">
-              {bottomItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <li key={item.path}>
-                    <NavItemWithTooltip label={item.label} collapsed={collapsed}>
-                      <NavLink to={item.path} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all ${isActive ? "bg-slate-500/10 text-white border border-white/20" : "text-slate-500 hover:text-slate-300"}`}>
-                        <item.icon size={20} />
-                        {(!collapsed || isMobile) && <span className="text-sm font-medium">{item.label}</span>}
-                      </NavLink>
-                    </NavItemWithTooltip>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </nav>
-
-        <div className="p-4 border-t border-white/10 space-y-4">
-          {(!collapsed || isMobile) && (
-            <div className="p-3 bg-white/5 rounded-xl border border-white/10 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                <Shield size={16} className="text-purple-400" />
+        {/* SEÇÃO DO CEO - FORÇADA POR EMAIL */}
+        {isC_E_O && (
+          <div className="mt-8">
+            <p className="text-[10px] font-mono text-amber-500 uppercase tracking-[0.2em] px-4 mb-2 font-bold">Acesso CEO</p>
+            <Link
+              to="/admin"
+              className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 border ${
+                isActive("/admin")
+                  ? "bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-[0_0_15px_-5px_rgba(245,158,11,0.3)]"
+                  : "text-slate-400 hover:text-amber-200 hover:bg-amber-500/5 border-transparent"
+              }`}
+            >
+              <Zap size={20} className={isActive("/admin") ? "text-amber-400" : "text-amber-600/50 group-hover:text-amber-400"} />
+              <div className="flex flex-col">
+                <span className="text-sm font-bold">CEO Portal</span>
+                <span className="text-[9px] opacity-70 uppercase tracking-tighter">Lucros & Usuários</span>
               </div>
-              <div className="overflow-hidden">
-                <p className="text-xs font-bold text-white truncate">{user?.username || user?.email}</p>
-                <p className="text-[10px] text-slate-500 uppercase">{user?.plan_type || 'Plano I'}</p>
+              <ChevronRight size={14} className="ml-auto opacity-30" />
+            </Link>
+          </div>
+        )}
+      </nav>
+
+      <div className="p-4 bg-[#080a0f] border-t border-white/5">
+        <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+              <User className="text-white" size={20} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-white truncate">{user?.email?.split('@')[0] || "Admin"}</p>
+              <div className="flex items-center gap-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[9px] text-slate-400 uppercase font-bold tracking-tighter">
+                  {isC_E_O ? "Master Access" : "Ativo"}
+                </span>
               </div>
             </div>
-          )}
-          <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 py-2 text-slate-500 hover:text-rose-400 transition-colors">
-            <LogOut size={18} />
-            {(!collapsed || isMobile) && <span className="text-sm font-medium">Sair</span>}
+          </div>
+          <button 
+            onClick={logout}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 hover:bg-rose-500/10 hover:text-rose-500 text-slate-400 text-xs font-bold transition-all"
+          >
+            <LogOut size={14} /> Sair
           </button>
         </div>
-      </motion.aside>
-      {showMatrix && <MatrixRain onClose={() => setShowMatrix(false)} />}
-    </>
+      </div>
+    </aside>
   );
-}
+};
+
+export default Sidebar;
