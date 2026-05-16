@@ -23,7 +23,8 @@ export default function PixModal({ isOpen, onClose, pixData, onPaymentSuccess })
     // Polling
     const poll = setInterval(async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/payments/status/${pixData.txid}`);
+        const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8000";
+        const response = await fetch(`${apiUrl}/api/payments/status/${pixData.txid}`);
         const data = await response.json();
         
         if (data.status === "CONCLUIDA") {

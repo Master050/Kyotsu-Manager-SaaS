@@ -78,7 +78,8 @@ export default function Login() {
       const amount = parseFloat(plan.price.replace(',', '.'));
 
       try {
-        const response = await fetch(`http://localhost:8000/api/payments/create`, {
+        const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8000";
+        const response = await fetch(`${apiUrl}/api/payments/create`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
