@@ -11,23 +11,16 @@ export default function LoginSuccessAnimation({ username, onComplete }) {
       subtitle: "Controle Total Ativado",
       particles: 20,
     },
-    Mãe: {
-      icon: Heart,
-      color: "#ec4899", // Rosa/Magenta
-      title: "BEM-VINDA, MÃE!",
-      subtitle: "É bom ter você aqui ❤️",
-      particles: 18,
-    },
-    Pai: {
+    USER: {
       icon: User,
-      color: "#3b82f6", // Azul
-      title: "BEM-VINDO, PAI!",
-      subtitle: "Feliz em ver você 👨",
+      color: "#3b82f6", // Azul Profissional
+      title: "BEM-VINDO!",
+      subtitle: "Acesso ao sistema liberado",
       particles: 18,
     },
   };
 
-  const config = animations[username] || animations.Mãe;
+  const config = animations[username] || animations.USER;
   const Icon = config.icon;
 
   return (

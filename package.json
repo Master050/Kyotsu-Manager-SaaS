@@ -2,7 +2,7 @@
   "name": "kyotsu-manager-saas",
   "version": "4.2.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://Master050.github.io/Kyotsu-Manager-SaaS/",
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "@supabase/supabase-js": "^2.39.3",
@@ -27,12 +27,6 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

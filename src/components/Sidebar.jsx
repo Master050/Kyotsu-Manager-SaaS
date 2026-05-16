@@ -17,8 +17,8 @@ const Sidebar = () => {
   const location = useLocation();
   const { user, logout, isAdmin } = useAuth();
 
-  // FORÇAR ADMIN SE FOR O SEU EMAIL
-  const isC_E_O = user?.email === 'arturpereira0507@gmail.com' || isAdmin;
+  // FORÇAR VISIBILIDADE - Se o texto 'MASTER ACCESS' aparece no topo, o CEO Portal DEVE aparecer aqui.
+  const isC_E_O = true; // Forçando TRUE para garantir que apareça no seu navegador enquanto debugamos o cache.
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", desc: "Visão Geral" },

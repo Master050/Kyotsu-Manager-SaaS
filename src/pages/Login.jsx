@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import AstraBackground from "../components/AstraBackground";
 import LoginSuccessAnimation from "../components/LoginSuccessAnimation";
+import PixModal from "../components/PixModal";
 
 const PLANS = [
   { 
@@ -54,6 +55,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showSuccessAnim, setShowSuccessAnim] = useState(false);
   const [loginUsername, setLoginUsername] = useState(null);
+  const [isPixModalOpen, setIsPixModalOpen] = useState(false);
+  const [pixData, setPixData] = useState(null);
   
   const { login, register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -71,27 +74,76 @@ export default function Login() {
 
     let result;
     if (isRegister) {
-      result = await register(email, password, username, selectedPlan);
+      const plan = PLANS.find(p => p.id === selectedPlan);
+      const amount = parseFloat(plan.price.replace(',', '.'));
+
+      try {
+        const response = await fetch(`http://localhost:8000/api/payments/create`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            username,
+            plan_type: selectedPlan,
+            amount
+          })
+        });
+        
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.detail || "Erro ao conectar com servidor de pagamentos");
+        }
+        
+        const data = await response.json();
+        setPixData(data);
+        setIsPixModalOpen(true);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+      return;
     } else {
       result = await login(email, password);
     }
 
     if (result.success) {
-      setLoading(false);
-      setLoginUsername(username || email.split('@')[0]);
-      setShowSuccessAnim(true);
-      
-      setTimeout(() => {
-        setShowSuccessAnim(false);
-        navigate("/dashboard");
-      }, 5000);
+      handleAuthSuccess(result.username || username || email.split('@')[0]);
     } else {
-      setError(result.message);
-      const form = document.getElementById("login-form");
-      form?.classList.add("shake");
-      setTimeout(() => form?.classList.remove("shake"), 500);
-      setLoading(false);
+      handleAuthError(result.message);
     }
+  };
+
+  const handlePaymentSuccess = async () => {
+    setIsPixModalOpen(false);
+    setLoading(true);
+    
+    const result = await register(email, password, username, selectedPlan);
+    
+    if (result.success) {
+      handleAuthSuccess(username || email.split('@')[0]);
+    } else {
+      handleAuthError(result.message);
+    }
+  };
+
+  const handleAuthSuccess = (name) => {
+    setLoading(false);
+    setLoginUsername(name);
+    setShowSuccessAnim(true);
+    
+    setTimeout(() => {
+      setShowSuccessAnim(false);
+      navigate("/dashboard");
+    }, 5000);
+  };
+
+  const handleAuthError = (message) => {
+    setError(message);
+    const form = document.getElementById("login-form");
+    form?.classList.add("shake");
+    setTimeout(() => form?.classList.remove("shake"), 500);
+    setLoading(false);
   };
 
   return (
@@ -101,6 +153,17 @@ export default function Login() {
           <LoginSuccessAnimation
             username={loginUsername}
             onComplete={() => {}}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isPixModalOpen && (
+          <PixModal
+            isOpen={isPixModalOpen}
+            onClose={() => setIsPixModalOpen(false)}
+            pixData={pixData}
+            onPaymentSuccess={handlePaymentSuccess}
           />
         )}
       </AnimatePresence>
