@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/Kyotsu-Manager-SaaS/static/css/main.8c180ee0.css",
-    "main.js": "/Kyotsu-Manager-SaaS/static/js/main.fad82352.js",
+    "main.css": "/Kyotsu-Manager-SaaS/static/css/main.970facd8.css",
+    "main.js": "/Kyotsu-Manager-SaaS/static/js/main.3db1fe45.js",
     "index.html": "/Kyotsu-Manager-SaaS/index.html",
-    "main.8c180ee0.css.map": "/Kyotsu-Manager-SaaS/static/css/main.8c180ee0.css.map",
-    "main.fad82352.js.map": "/Kyotsu-Manager-SaaS/static/js/main.fad82352.js.map"
+    "main.970facd8.css.map": "/Kyotsu-Manager-SaaS/static/css/main.970facd8.css.map",
+    "main.3db1fe45.js.map": "/Kyotsu-Manager-SaaS/static/js/main.3db1fe45.js.map"
   },
   "entrypoints": [
-    "static/css/main.8c180ee0.css",
-    "static/js/main.fad82352.js"
+    "static/css/main.970facd8.css",
+    "static/js/main.3db1fe45.js"
   ]
 }
